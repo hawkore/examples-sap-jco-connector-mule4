@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sap-jco="http://www.mulesoft.org/schema/mule/sap-jco" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sap-jco http://www.mulesoft.org/schema/mule/sap-jco/current/mule-sap-jco.xsd">
+	<sap-jco:config name="SAP_JCo_Config" doc:name="SAP JCo Config" doc:id="f645ed07-42c4-4029-b316-64c38c69d200" >
+		<sap-jco:connection sysnr="${sap.sysnr}" client="${sap.client}">
+			<sap-jco:authentication >
+				<sap-jco:username-password username="${sap.username}" password="${sap.password}" />
+			</sap-jco:authentication>
+			<sap-jco:remote-host-config >
+				<sap-jco:sap-application-server host="${sap.host}" />
+			</sap-jco:remote-host-config>
+		</sap-jco:connection>
+	</sap-jco:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="60233801-7ec4-46e2-b422-cea012affec8" file="sap.properties" />
+</mule>

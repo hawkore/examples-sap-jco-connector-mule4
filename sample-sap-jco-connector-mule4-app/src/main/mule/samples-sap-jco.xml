@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:sap-jco="http://www.mulesoft.org/schema/mule/sap-jco"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sap-jco http://www.mulesoft.org/schema/mule/sap-jco/current/mule-sap-jco.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="invoke-function-list-idoc-types" doc:id="5f28f81f-34e0-4dc0-9183-9ae4750a5d21" >
+		<sap-jco:function-invoke-srfc doc:name="invoke IDOCTYPES_LIST_WITH_MESSAGES to retrieve a list of IDocs" doc:id="e03d88c7-83f7-485f-8c3d-2e0908b75f3d" config-ref="SAP_JCo_Config" functionName="RFC_FUNCTION_SEARCH">
+			<sap-jco:content ><![CDATA[#[%dw 2.0
+output application/xml
+---
+{
+	IDOCTYPES_LIST_WITH_MESSAGES:{
+		
+	}
+}]]]></sap-jco:content>
+		</sap-jco:function-invoke-srfc>
+		<ee:transform doc:name="Function response to JSON list of IDoc Types" doc:id="4397f791-a97b-4171-8f22-ef197536bbb2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+flatten(payload.IDOCTYPES_LIST_WITH_MESSAGES.tables.PT_IDOCTYPES.*"row" map() ->
+{
+	idocType:$.IDOCTYP,
+	description: $.DESCRP
+}) as Array
+
+++
+
+flatten(payload.IDOCTYPES_LIST_WITH_MESSAGES.tables.PT_EXTTYPES.*"row" map() ->
+{
+	idocType:$.IDOCTYP,
+	idocExtension: $.CIMTYP default "",
+	description: $.DESCRP
+}) as Array
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="invoke-function-list-of-functions" doc:id="800c685f-0b12-4348-b737-9773552f78d2" >
+		<sap-jco:function-invoke-srfc doc:name="invoke RFC_FUNCTION_SEARCH to retrieve a list of functions that match name RFC_CHANGE_*" doc:id="632f0fb1-cb2e-4169-854b-e8373abe2dfc" config-ref="SAP_JCo_Config" functionName="RFC_FUNCTION_SEARCH">
+			<sap-jco:content ><![CDATA[#[%dw 2.0
+output application/xml
+---
+{
+	RFC_FUNCTION_SEARCH: {
+		"import": {
+			FUNCNAME: 'RFC_CHANGE_*'
+		}
+	}
+}]]]></sap-jco:content>
+		</sap-jco:function-invoke-srfc>
+		<ee:transform doc:name="Function response to JSON list of functions" doc:id="fa12630c-d43e-4fed-8d3a-f2dffdf55a5e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+flatten(payload.RFC_FUNCTION_SEARCH.tables.FUNCTIONS.*"row" map() ->
+{
+	functionName:$.FUNCNAME,
+	description: $.STEXT
+})
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="function-instance" doc:id="fe68a1cc-1671-4b88-b632-2ad09e8338cb" >
+		<sap-jco:function-instance functionName="RFC_FUNCTION_SEARCH" doc:name="RFC_FUNCTION_SEARCH Function - instance" doc:id="2c150af7-9fee-4e31-b642-b18a7fe3638c" config-ref="SAP_JCo_Config"/>
+	</flow>
+	<flow name="function-schema" doc:id="9e66d9b3-c3d4-4660-a039-cb62c5fcf0f5" >
+		<sap-jco:function-schema functionName="RFC_FUNCTION_SEARCH" doc:name="RFC_FUNCTION_SEARCH generate XML Schema" doc:id="8c75dd12-35ea-4a4f-9e11-0a0ff799f8c5" config-ref="SAP_JCo_Config" />
+	</flow>
+</mule>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="sap-jco-test-suite.xml" />
+	<munit:test name="samples-sap-jco-test-suite-invoke-function-list-idoc-typesTest" description="Test" doc:id="068aa2a9-c12f-4e8a-aef8-49f76b10ee36" >
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to invoke-function-list-idoc-types" doc:id="367593cb-a4a7-4365-95e4-09a9eab106f9" name="invoke-function-list-idoc-types"/>
+			<logger level="INFO" doc:name="Logger" doc:id="7351da61-977d-4ae8-9fb9-4015c680ed4a" message="#['Found IDoc types: ' ++ sizeOf(payload)]"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Payload not empty" doc:id="ec92ee42-1ca5-47b6-80bc-b85bed5de600" expression="#[payload]" is="#[MunitTools::not(MunitTools::isEmpty())]" message="Payload should not be empty"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="samples-sap-jco-test-suite-invoke-function-list-of-functionsTest" description="Test" doc:id="b4803258-3b20-4550-bbab-7ad154e25a14" >
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to invoke-function-list-of-functions" doc:id="5f75fe12-b3cf-4d6d-8594-5ae183ebba6e" name="invoke-function-list-of-functions"/>
+			<logger level="INFO" doc:name="Logger" doc:id="64528c22-6731-469f-9aa6-848130d7b1be" message="#['Found Functions: ' ++ sizeOf(payload)]"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Payload not empty" doc:id="82cecd36-a94a-4af6-bc32-1c31a5e61138" expression="#[payload]" is="#[MunitTools::not(MunitTools::isEmpty())]" message="Payload should not be empty" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="samples-sap-jco-test-suite-function-instanceTest" description="Test" doc:id="02b9f86d-2127-4a89-b69b-49be2bbe012f" >
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to function-instance" doc:id="56eae77e-b94f-4430-82f8-168f7f3d8219" name="function-instance"/>
+			<logger level="INFO" doc:name="Logger" doc:id="30be0fd8-e8ce-462c-8235-e00a5c3dd4ee" message="#[payload]"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="samples-sap-jco-test-suite-function-schemaTest" description="Test" doc:id="6d0f6cf7-671f-451d-b0a8-bbe0229bf1c9" >
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to function-schema" doc:id="e63e1032-26ae-41a7-a595-2142c965d5aa" name="function-schema"/>
+			<logger level="INFO" doc:name="Logger" doc:id="992e814d-105f-49c3-85f3-970b20d1e6ce" message="#[payload]"/>
+		</munit:execution>
+	</munit:test>
+</mule>
