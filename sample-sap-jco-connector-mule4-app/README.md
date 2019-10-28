@@ -9,7 +9,7 @@
 
 ## Valid product license required
 
-You will need a valid product license to run/testing SAP Jco Connector for Mule 4.
+You will need a valid product license to run/test SAP Jco Connector for Mule 4.
 
 Put your license for SAP JCo Connector for Mule 4 in `src/main/resources` directory.
 
