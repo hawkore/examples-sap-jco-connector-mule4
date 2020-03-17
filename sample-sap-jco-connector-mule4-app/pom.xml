@@ -17,7 +17,7 @@
     <mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
 
     <!-- Hawkore's SAP JCo connector version for Mule 4 (change with the version you want to use) -->
-    <hk.sap.jco.connector.version>1.0.0</hk.sap.jco.connector.version>
+    <hk.sap.jco.connector.version>1.0.1</hk.sap.jco.connector.version>
 
     <!-- SAP JCo libraries version (change with the local installed version you want to use) -->
     <sap.jco.version>3.0.19</sap.jco.version>
