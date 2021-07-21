@@ -38,4 +38,22 @@
 			<logger level="INFO" doc:name="Logger" doc:id="992e814d-105f-49c3-85f3-970b20d1e6ce" message="#[payload]"/>
 		</munit:execution>
 	</munit:test>
+	<munit:test name="samples-sap-jco-test-suite-invoke-functionUnit-over-bgRFCTest" doc:id="126af97a-76d7-4bfe-80ef-413773eaf009" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to invoke-functionUnit-over-bgRFC" doc:id="e6b917ea-ee8a-407b-a6a4-2188eb467899" name="invoke-functionUnit-over-bgRFC"/>
+			<logger level="INFO" doc:name="Logger" doc:id="0dd81fb2-449f-44a1-8be2-625e591b0076" message="#[payload]"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="samples-sap-jco-test-suite-invoke-function-over-bgRFCTest" doc:id="69448328-22c8-4e8b-b46c-27318ca272b6" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to invoke-function-over-bgRFC" doc:id="009e306e-712f-4f28-a20d-608e49f26951" name="invoke-function-over-bgRFC"/>
+			<logger level="INFO" doc:name="Logger" doc:id="87cfc27c-c11b-4084-80d6-332729975889" message="#[payload]"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="samples-sap-jco-test-suite-idoc-instanceTest" doc:id="7399baf8-4ecf-4595-9f86-6bcb190edb74" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to idoc-instance" doc:id="12d77811-68a6-40fe-88a6-7f4d35fb894f" name="idoc-instance"/>
+			<logger level="INFO" doc:name="Logger" doc:id="724352ec-6237-4674-b7b5-b629a688f72c" message="#[payload]"/>
+		</munit:execution>
+	</munit:test>
 </mule>

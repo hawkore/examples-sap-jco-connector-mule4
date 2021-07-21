@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.hawkore.mule.extensions.samples</groupId>
@@ -13,16 +12,16 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <app.runtime>4.2.1</app.runtime>
+    <app.runtime>4.2.2-20210129</app.runtime>
     <mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
 
     <!-- Hawkore's SAP JCo connector version for Mule 4 (change with the version you want to use) -->
-    <hk.sap.jco.connector.version>1.0.1</hk.sap.jco.connector.version>
+    <hk.sap.jco.connector.version>2.0.0</hk.sap.jco.connector.version>
 
     <!-- SAP JCo libraries version (change with the local installed version you want to use) -->
     <sap.jco.version>3.0.19</sap.jco.version>
 
-    <munit.version>2.1.5</munit.version>
+    <munit.version>2.2.3</munit.version>
   </properties>
 
   <build>
@@ -126,14 +125,14 @@
     <dependency>
       <groupId>com.mulesoft.munit</groupId>
       <artifactId>munit-runner</artifactId>
-      <version>2.1.5</version>
+      <version>${munit.version}</version>
       <classifier>mule-plugin</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.mulesoft.munit</groupId>
       <artifactId>munit-tools</artifactId>
-      <version>2.1.5</version>
+      <version>${munit.version}</version>
       <classifier>mule-plugin</classifier>
       <scope>test</scope>
     </dependency>

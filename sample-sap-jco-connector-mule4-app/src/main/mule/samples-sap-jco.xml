@@ -7,14 +7,12 @@ http://www.mulesoft.org/schema/mule/sap-jco http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
 	<flow name="invoke-function-list-idoc-types" doc:id="5f28f81f-34e0-4dc0-9183-9ae4750a5d21" >
-		<sap-jco:function-invoke-srfc doc:name="invoke IDOCTYPES_LIST_WITH_MESSAGES to retrieve a list of IDocs" doc:id="e03d88c7-83f7-485f-8c3d-2e0908b75f3d" config-ref="SAP_JCo_Config" functionName="RFC_FUNCTION_SEARCH">
+		<sap-jco:function-invoke-srfc doc:name="invoke IDOCTYPES_LIST_WITH_MESSAGES to retrieve a list of IDocs" doc:id="e03d88c7-83f7-485f-8c3d-2e0908b75f3d" config-ref="SAP_JCo_Config" functionName="IDOCTYPES_LIST_WITH_MESSAGES">
 			<sap-jco:content ><![CDATA[#[%dw 2.0
 output application/xml
 ---
 {
-	IDOCTYPES_LIST_WITH_MESSAGES:{
-		
-	}
+	IDOCTYPES_LIST_WITH_MESSAGES: {}
 }]]]></sap-jco:content>
 		</sap-jco:function-invoke-srfc>
 		<ee:transform doc:name="Function response to JSON list of IDoc Types" doc:id="4397f791-a97b-4171-8f22-ef197536bbb2" >
@@ -22,23 +20,18 @@ output application/xml
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-flatten(payload.IDOCTYPES_LIST_WITH_MESSAGES.tables.PT_IDOCTYPES.*"row" map() ->
+flatten(payload.IDOCTYPES_LIST_WITH_MESSAGES.tables.PT_IDOCTYPES.*row map() ->
 {
-	idocType:$.IDOCTYP,
-	description: $.DESCRP
-}) as Array
-
-++
-
-flatten(payload.IDOCTYPES_LIST_WITH_MESSAGES.tables.PT_EXTTYPES.*"row" map() ->
-{
-	idocType:$.IDOCTYP,
-	idocExtension: $.CIMTYP default "",
-	description: $.DESCRP
-}) as Array
+	idocType:$.IDOCTYP default "",
+	idocExtension: null,
+	description: $.DESCRP default ""
+})
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+	</flow>
+	<flow name="idoc-instance" doc:id="f64e7e0d-e6fd-42c2-b443-7076a0a0dea0" >
+		<sap-jco:idoc-instance idocType="RSINFO" doc:name="IDoc - instance RSINFO" doc:id="c88dd557-5505-454f-9475-fd4c6de9ed72" config-ref="SAP_JCo_Config"/>
 	</flow>
 	<flow name="invoke-function-list-of-functions" doc:id="800c685f-0b12-4348-b737-9773552f78d2" >
 		<sap-jco:function-invoke-srfc doc:name="invoke RFC_FUNCTION_SEARCH to retrieve a list of functions that match name RFC_CHANGE_*" doc:id="632f0fb1-cb2e-4169-854b-e8373abe2dfc" config-ref="SAP_JCo_Config" functionName="RFC_FUNCTION_SEARCH">
@@ -48,7 +41,7 @@ output application/xml
 {
 	RFC_FUNCTION_SEARCH: {
 		"import": {
-			FUNCNAME: 'RFC_CHANGE_*'
+			FUNCNAME: 'RFC_FUNCTION_*'
 		}
 	}
 }]]]></sap-jco:content>
@@ -58,7 +51,7 @@ output application/xml
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-flatten(payload.RFC_FUNCTION_SEARCH.tables.FUNCTIONS.*"row" map() ->
+flatten(payload.RFC_FUNCTION_SEARCH.tables.FUNCTIONS.*row map() ->
 {
 	functionName:$.FUNCNAME,
 	description: $.STEXT
@@ -72,5 +65,79 @@ flatten(payload.RFC_FUNCTION_SEARCH.tables.FUNCTIONS.*"row" map() ->
 	</flow>
 	<flow name="function-schema" doc:id="9e66d9b3-c3d4-4660-a039-cb62c5fcf0f5" >
 		<sap-jco:function-schema functionName="RFC_FUNCTION_SEARCH" doc:name="RFC_FUNCTION_SEARCH generate XML Schema" doc:id="8c75dd12-35ea-4a4f-9e11-0a0ff799f8c5" config-ref="SAP_JCo_Config" />
+	</flow>
+	<flow name="invoke-function-over-bgRFC" doc:id="09be3275-f7f7-4c87-9cda-9f293b13a350" >
+		<sap-jco:function-invoke-bgrfc doc:name="Invoke IDOCTYPES_LIST_WITH_MESSAGES over bgRFC" doc:id="87edd127-5b41-43de-ab90-87f577bd0bd2" config-ref="SAP_JCo_Config" functionName="IDOCTYPES_LIST_WITH_MESSAGES" traceOn="true">
+			<sap-jco:content ><![CDATA[#[%dw 2.0
+output application/xml
+---
+{
+	IDOCTYPES_LIST_WITH_MESSAGES: {}
+}]]]></sap-jco:content>
+		</sap-jco:function-invoke-bgrfc>
+		<until-successful maxRetries="5" doc:name="Until Successful - just to monitor CONFIRMED state" doc:id="ef883b5e-e18e-438f-bfb6-02baa4c16cf9" millisBetweenRetries="5000">
+			<logger level="INFO" doc:name="Logger" doc:id="eaa3350e-5677-4168-9c3a-51f28468857e" message="#[payload]" />
+			<sap-jco:function-unit-status doc:name="Get function unit status" doc:id="c12fafbf-721d-4c07-86c1-586bd67efa15" config-ref="SAP_JCo_Config" target="status"/>
+			<choice doc:name="Choice" doc:id="9e308b27-9c09-4880-8e2a-c5114c0a93bb" >
+				<when expression="#[vars.status == 'CONFIRMED']" >
+					<logger level="INFO" doc:name="Logger" doc:id="02ba035e-b953-4204-84a1-ca6bc6691d0f" message="#[payload]" />
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="80f3762f-816c-45ab-9a45-0c5eac0dce06" message="#[vars.status]" />
+					<raise-error doc:name="Raise error" doc:id="bf898f7b-629b-45f6-b7d5-6574890e3d58" type="TESTING:STATUS_NOT_CONFIRMED" />
+				</otherwise>
+			</choice>
+		</until-successful>
+	</flow>
+	<flow name="invoke-functionUnit-over-bgRFC" doc:id="6a960c2d-a6d0-4f22-9b89-5157619a9660" >
+		<sap-jco:function-unit-create doc:name="Create a Function Unit" doc:id="609b999d-9b60-4876-b3e7-46598679844c" config-ref="SAP_JCo_Config" traceOn="true"/>
+		<sap-jco:function-unit-add-function doc:name="Add function IDOCTYPES_LIST_WITH_MESSAGES" doc:id="6b54f2da-e883-4d69-a220-504d26073fad" config-ref="SAP_JCo_Config" functionName="IDOCTYPES_LIST_WITH_MESSAGES">
+			<sap-jco:content ><![CDATA[#[%dw 2.0
+output application/xml
+---
+{
+	IDOCTYPES_LIST_WITH_MESSAGES: {}
+}]]]></sap-jco:content>
+		</sap-jco:function-unit-add-function>
+		<sap-jco:function-unit-add-function doc:name="Add function RFC_FUNCTION_SEARCH" doc:id="c3837dd7-b3b7-4a3c-8fb5-1d392502cebc" config-ref="SAP_JCo_Config" functionName="RFC_FUNCTION_SEARCH">
+			<sap-jco:content ><![CDATA[#[%dw 2.0
+output application/xml
+---
+{
+	RFC_FUNCTION_SEARCH: {
+		"import": {
+			FUNCNAME: 'RFC_FUNCTION_*'
+		}
+	}
+}]]]></sap-jco:content>
+		</sap-jco:function-unit-add-function>
+		<logger level="INFO" doc:name="Log function unit details" doc:id="2eb88ebb-d050-4f7e-8775-79c58065411a" message="#[payload]"/>
+		<until-successful maxRetries="5" doc:name="Until Successful - just to monitor COMMITTED state" doc:id="ae818446-5bd7-4259-9137-8cf1008cbdd4" millisBetweenRetries="5000">
+			<sap-jco:function-unit-send doc:name="Send function unit to destination using bgRFC protocol WITHOUT confirmation to try recovery" doc:id="0a996cfc-b9f8-4bbb-ac00-faed0f39fc1d" config-ref="SAP_JCo_Config" confirm="false" />
+			<sap-jco:function-unit-status doc:name="Get function unit status" doc:id="f6dd8de7-87a1-4807-bd46-b6f19345e4bf" config-ref="SAP_JCo_Config" unitIdentifier="#[payload.unitIdentifier]" target="status"/>
+			<choice doc:name="Choice" doc:id="9cae6510-2b74-4c79-adcb-7ff59c20042c" >
+				<when expression="#[vars.status == 'COMMITTED']">
+					<logger level="INFO" doc:name="Logger" doc:id="13418f2e-d34c-4828-bf9b-d67304043e36" message="#[vars.status]"/>
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="84f582f0-02ac-46c9-9f94-4f41ad7b721e" message="#[vars.status]"/>
+					<raise-error doc:name="Raise error" doc:id="a39727c9-a937-4e87-81a6-99b3a3071f62" type="TESTING:STATUS_NOT_CONFIRMED" />
+				</otherwise>
+			</choice>
+		</until-successful>
+		<until-successful maxRetries="5" doc:name="Until Successful - just to monitor MANUAL CONFIRMED state" doc:id="cd2e6310-efac-43d8-8b85-9c84b4626a8d" millisBetweenRetries="5000">
+			<sap-jco:function-unit-confirm doc:name="Manual confirm Funtion Unit" doc:id="89041546-2744-4711-9447-60fe07efca28" config-ref="SAP_JCo_Config" unitIdentifier="#[payload.unitIdentifier]"/>
+			<logger level="INFO" doc:name="Logger" doc:id="564aeb0c-b266-4165-a457-7ec80c7a4dee" message="#[payload]" />
+			<sap-jco:function-unit-status doc:name="Get function unit status" doc:id="8e0261cc-8890-455f-8539-a124275e7b9d" config-ref="SAP_JCo_Config" unitIdentifier="#[payload.unitIdentifier]" target="status"/>
+			<choice doc:name="Choice" doc:id="47f84104-53db-417c-ae6b-475587ed5314" >
+				<when expression="#[vars.status == 'CONFIRMED']" >
+					<logger level="INFO" doc:name="Logger" doc:id="5fdb01a7-b021-4394-96e6-fcfe1d423daa" message="#[payload]" />
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="d3b3672c-fe04-4e33-a530-06eab46a996c" message="#[vars.status]" />
+					<raise-error doc:name="Raise error" doc:id="75d81c72-e05b-4d2f-bc75-cbbbd1464de9" type="TESTING:STATUS_NOT_CONFIRMED" />
+				</otherwise>
+			</choice>
+		</until-successful>
 	</flow>
 </mule>
