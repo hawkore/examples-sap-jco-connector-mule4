@@ -1,6 +1,6 @@
-# Hawkore's SAP JCo connector for Mule 4
+# Connect SAP with Mule 4
 
-This connector allows you integrate your Mule applications with SAP ERP Central Component (ECC). 
+This connector allows you to integrate your Mule applications with SAP ERP Central Component (ECC). 
 
 Features:
 
