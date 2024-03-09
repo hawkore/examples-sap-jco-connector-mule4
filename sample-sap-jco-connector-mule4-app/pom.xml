@@ -12,20 +12,32 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <app.runtime>4.2.2-20210129</app.runtime>
-    <mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
-
+    <app.runtime>4.4.0-20231211</app.runtime>
+    <mule.maven.plugin.version>4.0.0</mule.maven.plugin.version>
     <!-- Hawkore's SAP JCo connector version for Mule 4 (change with the version you want to use) -->
-    <hk.sap.jco.connector.version>2.0.0</hk.sap.jco.connector.version>
-
+    <hk.sap.jco.connector.version>2.0.4</hk.sap.jco.connector.version>
     <!-- SAP JCo libraries version (change with the local installed version you want to use) -->
-    <sap.jco.version>3.0.19</sap.jco.version>
-
-    <munit.version>2.2.3</munit.version>
+    <sap.jco.version>3.1.8</sap.jco.version>
+    <munit.version>3.0.0</munit.version>
   </properties>
 
   <build>
     <plugins>
+      <!-- display active profile in package phase -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-help-plugin</artifactId>
+        <version>3.4.0</version>
+        <executions>
+          <execution>
+            <id>show-profiles</id>
+            <phase>package</phase>
+            <goals>
+              <goal>active-profiles</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.mule.tools.maven</groupId>
         <artifactId>mule-maven-plugin</artifactId>
@@ -67,6 +79,7 @@
         </executions>
         <configuration>
           <coverage>
+            <runtimeVersion>${app.runtime}</runtimeVersion>
             <runCoverage>true</runCoverage>
             <formats>
               <format>html</format>
@@ -134,6 +147,12 @@
       <artifactId>munit-tools</artifactId>
       <version>${munit.version}</version>
       <classifier>mule-plugin</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mule.weave</groupId>
+      <artifactId>assertions</artifactId>
+      <version>1.2.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
