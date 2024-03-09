@@ -20,9 +20,9 @@ _**DataSense** is a feature of Anypoint Studio that automatically infers input a
 
 	-  Java >= 1.8.0_65 (OpenJDK and Sun have been tested)
 	-  Maven >= 3.3.0
-	-  Mule 4.2.1 (EE or community)
-	-  Anypoint Studio 7+ (Recomended version 7.3.4, Anypoint Studio 7.3.5 has a bug related to external libraries)
-	-  Official SAP JCo/IDoc libraries
+	-  Mule 4.4.0+ (EE or community)
+	-  Anypoint Studio 7+
+	-  Official SAP JCo/IDoc SDK libraries v3.1.8
 	
 ## Clone
 
