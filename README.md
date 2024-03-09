@@ -22,7 +22,7 @@ _**DataSense** is a feature of Anypoint Studio that automatically infers input a
 	-  Maven >= 3.3.0
 	-  Mule 4.4.0+ (EE or community)
 	-  Anypoint Studio 7+
-	-  Official SAP JCo/IDoc SDK libraries v3.1.8
+	-  Official SAP SDK JCo/IDoc libraries v3.1.8
 	
 ## Clone
 
